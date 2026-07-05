@@ -1,1 +1,638 @@
 # Chantierpro
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ChantierPro — SaaS Construction</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F4F0;color:#1a1a18;min-height:100vh}
+:root{
+  --orange:#D85A30;--orange-light:#FAECE7;--orange-dark:#993C1D;
+  --border:#e0ddd6;--card:#fff;--surface:#F5F4F0;
+  --text:#1a1a18;--muted:#888780;--r:12px;--rm:8px;
+}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:230px;flex-shrink:0;background:var(--card);border-right:0.5px solid var(--border);display:flex;flex-direction:column}
+.logo{padding:20px 16px 16px;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid var(--border)}
+.logo-icon{width:34px;height:34px;background:var(--orange);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.logo-icon i{color:#fff;font-size:18px}
+.logo-text{font-size:15px;font-weight:600;color:var(--text)}
+.logo-sub{font-size:10px;color:var(--muted);margin-top:1px}
+nav{padding:12px 8px;flex:1;overflow-y:auto}
+.nav-section{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.07em;text-transform:uppercase;padding:10px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--rm);cursor:pointer;font-size:13.5px;color:var(--muted);margin-bottom:2px;transition:all 0.12s;user-select:none}
+.nav-item:hover{background:var(--surface);color:var(--text)}
+.nav-item.active{background:var(--orange-light);color:var(--orange-dark);font-weight:500}
+.nav-item.active i{color:var(--orange)}
+.nav-item i{font-size:17px;width:20px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--orange);color:#fff;font-size:10px;font-weight:600;padding:2px 6px;border-radius:10px;min-width:20px;text-align:center}
+.sidebar-footer{padding:14px 16px;border-top:0.5px solid var(--border)}
+.user-row{display:flex;align-items:center;gap:9px}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--orange-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--orange-dark);flex-shrink:0}
+.user-name{font-size:13px;font-weight:500;color:var(--text)}
+.user-role{font-size:11px;color:var(--muted)}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
+.topbar{padding:14px 24px;border-bottom:0.5px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10}
+.topbar-title{font-size:16px;font-weight:600;color:var(--text)}
+.topbar-sub{font-size:12px;color:var(--muted);margin-top:1px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--rm);border:0.5px solid var(--border);background:var(--card);font-size:13px;font-weight:500;cursor:pointer;color:var(--text);transition:all 0.12s;font-family:inherit}
+.btn:hover{background:var(--surface)}
+.btn-primary{background:var(--orange);color:#fff;border-color:var(--orange)}
+.btn-primary:hover{background:var(--orange-dark);border-color:var(--orange-dark)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.content{padding:24px;flex:1}
+.panel{display:none}
+.panel.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.stats-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.stat-card{background:var(--surface);border-radius:var(--rm);padding:14px}
+.stat-label{font-size:12px;color:var(--muted);margin-bottom:5px}
+.stat-value{font-size:22px;font-weight:600;color:var(--text)}
+.stat-delta{font-size:11px;color:#3B6D11;margin-top:3px}
+.stat-delta.neg{color:#A32D2D}
+.card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:600;color:var(--text)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;font-weight:600;color:var(--muted);padding:7px 10px;border-bottom:0.5px solid var(--border)}
+td{padding:10px 10px;border-bottom:0.5px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface)}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:10px;font-size:11px;font-weight:500;white-space:nowrap}
+.badge-green{background:#EAF3DE;color:#3B6D11}
+.badge-amber{background:#FAEEDA;color:#854F0B}
+.badge-red{background:#FCEBEB;color:#A32D2D}
+.badge-blue{background:#E6F1FB;color:#185FA5}
+.badge-gray{background:#F1EFE8;color:#5F5E5A}
+.badge-orange{background:var(--orange-light);color:var(--orange-dark)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+label{font-size:12px;font-weight:500;color:var(--muted)}
+input,select,textarea{padding:9px 12px;border:0.5px solid var(--border);border-radius:var(--rm);font-size:13px;background:var(--card);color:var(--text);font-family:inherit;width:100%;transition:border-color 0.12s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange)}
+textarea{resize:vertical;min-height:72px}
+.soum-preview{background:var(--surface);border-radius:var(--rm);padding:16px;margin-top:16px}
+.soum-line{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:0.5px solid var(--border);color:var(--text)}
+.soum-line:last-child{border:none;font-weight:600;font-size:15px;margin-top:6px;color:var(--orange)}
+.cal-header-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px}
+.cal-day-name{text-align:center;font-size:11px;font-weight:600;color:var(--muted);padding:4px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;font-size:12px;cursor:pointer;position:relative;min-height:44px;color:var(--text);transition:background 0.1s}
+.cal-day:hover{background:var(--surface)}
+.cal-day.today{background:var(--orange);color:#fff;font-weight:600}
+.cal-day.has-event::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--orange);position:absolute;bottom:5px}
+.cal-day.today.has-event::after{background:#fff}
+.cal-day.other-month{opacity:0.3}
+.event-item{display:flex;gap:10px;align-items:flex-start;padding:10px;background:var(--surface);border-radius:var(--rm);margin-bottom:8px}
+.event-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.event-title{font-size:13px;font-weight:500;color:var(--text)}
+.event-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.deposit-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:0.5px solid var(--border)}
+.deposit-row:last-child{border:none}
+.deposit-icon{width:36px;height:36px;border-radius:var(--rm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.deposit-info{flex:1;min-width:0}
+.deposit-title{font-size:13px;font-weight:500;color:var(--text)}
+.deposit-meta{font-size:11px;color:var(--muted);margin-top:1px}
+.progress-bar{height:5px;background:var(--surface);border-radius:3px;margin-top:7px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;background:var(--orange)}
+.deposit-amount{font-size:13px;font-weight:600;flex-shrink:0;white-space:nowrap}
+.reminder-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border)}
+.reminder-item:last-child{border:none}
+.rem-icon{width:36px;height:36px;border-radius:var(--rm);background:var(--orange-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rem-icon i{color:var(--orange);font-size:17px}
+.rem-info{flex:1}
+.rem-title{font-size:13px;font-weight:500;color:var(--text)}
+.rem-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.toggle{position:relative;width:38px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.slider-tog{position:absolute;inset:0;background:#d0cec7;border-radius:11px;cursor:pointer;transition:0.2s}
+.slider-tog::before{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;bottom:3px;left:3px;transition:0.2s}
+.toggle input:checked+.slider-tog{background:var(--orange)}
+.toggle input:checked+.slider-tog::before{transform:translateX(16px)}
+/* AI box */
+.ai-box{background:linear-gradient(135deg,#fff5f2,#fff);border:1px solid var(--orange-light);border-radius:var(--r);padding:18px;margin-bottom:16px}
+.ai-prompt-area{position:relative}
+.ai-prompt-area textarea{border-color:var(--orange-light);min-height:80px;font-size:14px;padding-right:110px}
+.ai-btn-inside{position:absolute;bottom:10px;right:10px}
+.ai-result{background:var(--orange-light);border-radius:var(--rm);padding:14px;margin-top:12px;font-size:13px;line-height:1.6;color:var(--orange-dark);display:none}
+.ai-result.visible{display:block}
+.ai-loading{display:none;align-items:center;gap:8px;color:var(--orange);font-size:13px;margin-top:12px}
+.ai-loading.visible{display:flex}
+.dot-anim span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--orange);margin:0 2px;animation:bounce 1s infinite}
+.dot-anim span:nth-child(2){animation-delay:.15s}
+.dot-anim span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+/* Equipes */
+.team-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.member-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}
+.member-avatar{width:52px;height:52px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600}
+.member-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.member-role{font-size:12px;color:var(--muted);margin-bottom:10px}
+.member-stats{display:flex;justify-content:center;gap:16px;font-size:12px;color:var(--muted);border-top:0.5px solid var(--border);padding-top:10px;margin-top:4px}
+.member-stat-val{font-size:14px;font-weight:600;color:var(--text);display:block}
+.schedule-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.schedule-row:last-child{border:none}
+.sched-name{font-size:13px;font-weight:500;color:var(--text);width:140px;flex-shrink:0}
+.sched-days{display:flex;gap:4px;flex:1}
+.sched-day{width:32px;height:28px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;background:var(--surface);color:var(--muted)}
+.sched-day.on{background:var(--orange-light);color:var(--orange-dark)}
+.sched-day.today-col{border:1.5px solid var(--orange)}
+.sched-hours{font-size:12px;color:var(--muted);width:80px;text-align:right;flex-shrink:0}
+/* Topbar actions */
+.topbar-actions{display:flex;gap:8px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-icon"><i class="ti ti-building-warehouse"></i></div>
+      <div>
+        <div class="logo-text">ChantierPro</div>
+        <div class="logo-sub">Électricien · Plombier · Menuisier · Excav.</div>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-section">Principal</div>
+      <div class="nav-item active" onclick="show('dashboard',this)"><i class="ti ti-layout-dashboard"></i>Tableau de bord</div>
+      <div class="nav-item" onclick="show('soumissions',this)"><i class="ti ti-file-invoice"></i>Soumissions<span class="nav-badge">3</span></div>
+      <div class="nav-item" onclick="show('factures',this)"><i class="ti ti-receipt"></i>Factures<span class="nav-badge">2</span></div>
+      <div class="nav-section">Chantier</div>
+      <div class="nav-item" onclick="show('calendrier',this)"><i class="ti ti-calendar"></i>Calendrier</div>
+      <div class="nav-item" onclick="show('depots',this)"><i class="ti ti-coin"></i>Dépôts</div>
+      <div class="nav-item" onclick="show('rappels',this)"><i class="ti ti-bell"></i>Rappels auto.</div>
+      <div class="nav-section">Équipe</div>
+      <div class="nav-item" onclick="show('equipes',this)"><i class="ti ti-users"></i>Gestion d'équipe</div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="avatar">MA</div>
+        <div><div class="user-name">Marc Audet</div><div class="user-role">Électricien maître</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Tableau de bord</div>
+        <div class="topbar-sub" id="topbar-sub">Lundi 22 juin 2026</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn" onclick="show('soumissions',document.querySelectorAll('.nav-item')[1])"><i class="ti ti-plus"></i>Nouvelle soumission</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Soumissions ce mois</div><div class="stat-value">14</div><div class="stat-delta">↑ 3 vs mois dernier</div></div>
+          <div class="stat-card"><div class="stat-label">Factures en attente</div><div class="stat-value">38 400 $</div><div class="stat-delta neg">2 en retard</div></div>
+          <div class="stat-card"><div class="stat-label">Dépôts reçus (juin)</div><div class="stat-value">12 200 $</div><div class="stat-delta">4 projets</div></div>
+          <div class="stat-card"><div class="stat-label">Chantiers actifs</div><div class="stat-value">6</div><div class="stat-delta">↑ 1 cette semaine</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:16px">
+          <div>
+            <div class="card">
+              <div class="card-header"><span class="card-title">Soumissions récentes</span><button class="btn btn-sm" onclick="show('soumissions',document.querySelectorAll('.nav-item')[1])">Voir tout →</button></div>
+              <table>
+                <tr><th>Client</th><th>Travaux</th><th>Montant</th><th>Statut</th></tr>
+                <tr><td><strong>Résidences Lavoie</strong></td><td>Câblage électrique — 2 logements</td><td>4 200 $</td><td><span class="badge badge-green">Acceptée</span></td></tr>
+                <tr><td><strong>Constructions MPB</strong></td><td>Panneau 200A + prise EV</td><td>2 850 $</td><td><span class="badge badge-amber">En attente</span></td></tr>
+                <tr><td><strong>Beaulieu & Fils</strong></td><td>Éclairage extérieur commercial</td><td>7 600 $</td><td><span class="badge badge-blue">Envoyée</span></td></tr>
+                <tr><td><strong>Mme Tremblay</strong></td><td>Rénovation cuisine + sdb</td><td>1 950 $</td><td><span class="badge badge-red">Refusée</span></td></tr>
+              </table>
+            </div>
+            <div class="card">
+              <div class="card-header"><span class="card-title">Disponibilité de l'équipe — cette semaine</span><button class="btn btn-sm" onclick="show('equipes',document.querySelectorAll('.nav-item')[6])">Équipe →</button></div>
+              <div class="schedule-row"><span class="sched-name"><strong>Marc Audet</strong> (toi)</span><div class="sched-days"><div class="sched-day today-col on">L</div><div class="sched-day on">M</div><div class="sched-day on">M</div><div class="sched-day on">J</div><div class="sched-day">V</div></div><span class="sched-hours">32 h prév.</span></div>
+              <div class="schedule-row"><span class="sched-name">Jean-Fr. Bouchard</span><div class="sched-days"><div class="sched-day today-col on">L</div><div class="sched-day on">M</div><div class="sched-day">M</div><div class="sched-day on">J</div><div class="sched-day on">V</div></div><span class="sched-hours">28 h prév.</span></div>
+              <div class="schedule-row"><span class="sched-name">Karine Simard</span><div class="sched-days"><div class="sched-day today-col">L</div><div class="sched-day on">M</div><div class="sched-day on">M</div><div class="sched-day on">J</div><div class="sched-day on">V</div></div><span class="sched-hours">36 h prév.</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-header" style="margin-bottom:10px"><span class="card-title">Prochains chantiers</span></div>
+              <div class="event-item"><div class="event-dot" style="background:#D85A30"></div><div><div class="event-title">Résidences Lavoie — câblage unité 3</div><div class="event-meta">Demain, 7h00 · Marc + Jean-Fr.</div></div></div>
+              <div class="event-item"><div class="event-dot" style="background:#185FA5"></div><div><div class="event-title">MPB — inspection RBQ finale</div><div class="event-meta">24 juin, 9h30</div></div></div>
+              <div class="event-item"><div class="event-dot" style="background:#3B6D11"></div><div><div class="event-title">Beaulieu & Fils — éclairage</div><div class="event-meta">26 juin, 7h00 · 2 équipes</div></div></div>
+            </div>
+            <div class="card">
+              <div class="card-header" style="margin-bottom:10px"><span class="card-title">Alertes</span></div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;gap:10px;padding:10px;background:#FCEBEB;border-radius:var(--rm)"><i class="ti ti-alert-triangle" style="color:#A32D2D;flex-shrink:0"></i><div style="font-size:12px;color:#791F1F"><strong>Drolet Commerce</strong> — dépôt 25 jours en retard (5 000 $)</div></div>
+                <div style="display:flex;gap:10px;padding:10px;background:#FAEEDA;border-radius:var(--rm)"><i class="ti ti-clock" style="color:#854F0B;flex-shrink:0"></i><div style="font-size:12px;color:#633806"><strong>Constructions MPB</strong> — soumission sans réponse depuis 3 jours</div></div>
+                <div style="display:flex;gap:10px;padding:10px;background:#EAF3DE;border-radius:var(--rm)"><i class="ti ti-check" style="color:#3B6D11;flex-shrink:0"></i><div style="font-size:12px;color:#27500A">Rappel envoyé à <strong>Beaulieu & Fils</strong> — facture #1044</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOUMISSIONS avec IA -->
+      <div class="panel" id="panel-soumissions">
+        <div class="ai-box">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <div style="width:28px;height:28px;border-radius:7px;background:var(--orange);display:flex;align-items:center;justify-content:center"><i class="ti ti-sparkles" style="color:#fff;font-size:15px"></i></div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:var(--text)">IA — Génération automatique</div>
+              <div style="font-size:11px;color:var(--muted)">Décris le projet en quelques mots, l'IA remplit la soumission</div>
+            </div>
+          </div>
+          <div class="ai-prompt-area">
+            <textarea id="ai-prompt" placeholder="Ex: Installation panneau 200A pour maison à Sherbrooke, prise pour thermopompe et 3 circuits 240V, client Résidences Lavoie, environ 2 jours de travail..."></textarea>
+            <button class="btn btn-primary ai-btn-inside" onclick="genererSoumission()"><i class="ti ti-sparkles"></i>Générer</button>
+          </div>
+          <div class="ai-loading" id="ai-loading"><div class="dot-anim"><span></span><span></span><span></span></div>L'IA rédige votre soumission…</div>
+          <div class="ai-result" id="ai-result"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Détails de la soumission</span></div>
+          <div class="form-grid">
+            <div class="form-group"><label>Nom du client</label><input type="text" id="f-client" placeholder="Ex: Résidences Lavoie inc."/></div>
+            <div class="form-group"><label>Type de travaux</label><select id="f-type"><option>Électricité</option><option>Plomberie</option><option>Menuiserie</option><option>Excavation</option><option>Multi-métiers</option></select></div>
+            <div class="form-group"><label>Adresse du chantier</label><input type="text" id="f-adresse" placeholder="123 rue des Érables, Sherbrooke"/></div>
+            <div class="form-group"><label>Date de début prévue</label><input type="date" id="f-date"/></div>
+            <div class="form-group full"><label>Description des travaux</label><textarea id="f-desc" placeholder="Décrivez les travaux en détail…"></textarea></div>
+            <div class="form-group"><label>Main-d'œuvre ($)</label><input type="number" id="mo" placeholder="0.00" oninput="calcSoum()"/></div>
+            <div class="form-group"><label>Matériaux ($)</label><input type="number" id="mat" placeholder="0.00" oninput="calcSoum()"/></div>
+            <div class="form-group"><label>Déplacement ($)</label><input type="number" id="dep" placeholder="0.00" oninput="calcSoum()"/></div>
+            <div class="form-group"><label>Marge bénéficiaire (%)</label><input type="number" id="marge" value="15" oninput="calcSoum()"/></div>
+            <div class="form-group"><label>Technicien assigné</label><select id="f-tech"><option>Marc Audet (moi)</option><option>Jean-François Bouchard</option><option>Karine Simard</option><option>Pascal Fortier</option><option>Non assigné</option></select></div>
+          </div>
+          <div class="soum-preview">
+            <div class="soum-line"><span>Main-d'œuvre</span><span id="s-mo">0,00 $</span></div>
+            <div class="soum-line"><span>Matériaux</span><span id="s-mat">0,00 $</span></div>
+            <div class="soum-line"><span>Déplacement</span><span id="s-dep">0,00 $</span></div>
+            <div class="soum-line"><span id="lbl-marge">Marge bénéficiaire (15 %)</span><span id="s-marge">0,00 $</span></div>
+            <div class="soum-line"><span>Sous-total</span><span id="s-sub">0,00 $</span></div>
+            <div class="soum-line"><span>TPS (5 %) + TVQ (9,975 %)</span><span id="s-tax">0,00 $</span></div>
+            <div class="soum-line"><span>TOTAL TTC</span><span id="s-total">0,00 $</span></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:16px">
+            <button class="btn btn-primary"><i class="ti ti-send"></i>Envoyer au client</button>
+            <button class="btn"><i class="ti ti-download"></i>PDF</button>
+            <button class="btn"><i class="ti ti-device-floppy"></i>Brouillon</button>
+            <button class="btn"><i class="ti ti-calendar"></i>Planifier au calendrier</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FACTURES -->
+      <div class="panel" id="panel-factures">
+        <div class="stats-grid stats-grid-3">
+          <div class="stat-card"><div class="stat-label">À percevoir</div><div class="stat-value">38 400 $</div></div>
+          <div class="stat-card"><div class="stat-label">En retard</div><div class="stat-value" style="color:#A32D2D">9 200 $</div></div>
+          <div class="stat-card"><div class="stat-label">Payées (juin)</div><div class="stat-value">22 750 $</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Suivi des factures</span><button class="btn btn-sm"><i class="ti ti-plus"></i>Nouvelle</button></div>
+          <table>
+            <tr><th>#</th><th>Client</th><th>Travaux</th><th>Montant TTC</th><th>Émise</th><th>Échéance</th><th>Statut</th><th></th></tr>
+            <tr><td style="color:var(--muted)">#1042</td><td><strong>Résidences Lavoie</strong></td><td>Câblage — unité 2</td><td>4 845 $</td><td>10 juin</td><td>10 juil.</td><td><span class="badge badge-green">Payée</span></td><td><button class="btn btn-sm">PDF</button></td></tr>
+            <tr><td style="color:var(--muted)">#1043</td><td><strong>Constructions MPB</strong></td><td>Panneau 200A</td><td>3 268 $</td><td>15 juin</td><td>15 juil.</td><td><span class="badge badge-amber">En attente</span></td><td><button class="btn btn-sm">Rappel</button></td></tr>
+            <tr><td style="color:var(--muted)">#1044</td><td><strong>Beaulieu & Fils</strong></td><td>Éclairage ext.</td><td>8 722 $</td><td>1 juin</td><td>1 juin</td><td><span class="badge badge-red">En retard</span></td><td><button class="btn btn-sm" style="color:var(--orange);border-color:var(--orange)">Rappel !</button></td></tr>
+            <tr><td style="color:var(--muted)">#1045</td><td><strong>Charest Réno.</strong></td><td>Rénovation sdb</td><td>2 240 $</td><td>19 juin</td><td>19 juil.</td><td><span class="badge badge-blue">Envoyée</span></td><td><button class="btn btn-sm">PDF</button></td></tr>
+            <tr><td style="color:var(--muted)">#1040</td><td><strong>Drolet Commerce</strong></td><td>Local commercial</td><td>18 750 $</td><td>28 mai</td><td>28 mai</td><td><span class="badge badge-red">En retard</span></td><td><button class="btn btn-sm" style="color:var(--orange);border-color:var(--orange)">Rappel !</button></td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- CALENDRIER -->
+      <div class="panel" id="panel-calendrier">
+        <div style="display:grid;grid-template-columns:1fr 290px;gap:16px">
+          <div class="card" style="margin-bottom:0">
+            <div class="card-header"><span class="card-title">Juin 2026</span><div style="display:flex;gap:6px"><button class="btn btn-sm">‹ Mai</button><button class="btn btn-sm">Juil. ›</button></div></div>
+            <div class="cal-header-days"><div class="cal-day-name">Lun</div><div class="cal-day-name">Mar</div><div class="cal-day-name">Mer</div><div class="cal-day-name">Jeu</div><div class="cal-day-name">Ven</div><div class="cal-day-name">Sam</div><div class="cal-day-name">Dim</div></div>
+            <div class="cal-grid" id="cal-main"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="card" style="margin-bottom:0">
+              <div class="card-header" style="margin-bottom:10px"><span class="card-title">Cette semaine</span></div>
+              <div class="event-item" style="margin-bottom:0"><div class="event-dot" style="background:#D85A30"></div><div><div class="event-title">Résidences Lavoie</div><div class="event-meta">Lun–Mar · Câblage · Marc + JF</div></div></div>
+              <div class="event-item" style="margin-bottom:0"><div class="event-dot" style="background:#185FA5"></div><div><div class="event-title">MPB — Inspection RBQ</div><div class="event-meta">Mer 24, 9h30</div></div></div>
+              <div class="event-item" style="margin-bottom:0"><div class="event-dot" style="background:#3B6D11"></div><div><div class="event-title">Beaulieu — Éclairage</div><div class="event-meta">Ven–Sam · 2 équipes</div></div></div>
+            </div>
+            <div class="card" style="margin-bottom:0">
+              <div class="card-header" style="margin-bottom:10px"><span class="card-title">Ajouter un chantier</span></div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div class="form-group"><label>Client</label><input type="text" placeholder="Nom du client"/></div>
+                <div class="form-group"><label>Date</label><input type="date"/></div>
+                <div class="form-group"><label>Équipe</label><select><option>Marc Audet</option><option>Jean-Fr. Bouchard</option><option>Karine Simard</option><option>Équipe complète</option></select></div>
+                <div class="form-group"><label>Durée</label><select><option>½ journée</option><option>1 journée</option><option>2–3 jours</option><option>1 semaine+</option></select></div>
+                <button class="btn btn-primary" style="justify-content:center"><i class="ti ti-plus"></i>Ajouter</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DÉPÔTS -->
+      <div class="panel" id="panel-depots">
+        <div class="stats-grid stats-grid-3">
+          <div class="stat-card"><div class="stat-label">Dépôts reçus (juin)</div><div class="stat-value">12 200 $</div><div class="stat-delta">4 projets</div></div>
+          <div class="stat-card"><div class="stat-label">Dépôts en attente</div><div class="stat-value">6 800 $</div><div class="stat-delta neg">3 projets</div></div>
+          <div class="stat-card"><div class="stat-label">Taux de dépôt moyen</div><div class="stat-value">32 %</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Gestion des acomptes</span><button class="btn btn-sm"><i class="ti ti-plus"></i>Enregistrer</button></div>
+          <div>
+            <div class="deposit-row">
+              <div class="deposit-icon" style="background:#EAF3DE"><i class="ti ti-check" style="color:#3B6D11;font-size:18px"></i></div>
+              <div class="deposit-info"><div class="deposit-title">Résidences Lavoie — Câblage logements</div><div class="deposit-meta">Reçu le 12 juin · Virement Interac</div><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></div>
+              <div class="deposit-amount" style="color:#3B6D11">1 200 $ ✓</div>
+            </div>
+            <div class="deposit-row">
+              <div class="deposit-icon" style="background:#EAF3DE"><i class="ti ti-check" style="color:#3B6D11;font-size:18px"></i></div>
+              <div class="deposit-info"><div class="deposit-title">Beaulieu & Fils — Éclairage commercial</div><div class="deposit-meta">Reçu le 5 juin · Chèque #4421</div><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></div>
+              <div class="deposit-amount" style="color:#3B6D11">3 000 $ ✓</div>
+            </div>
+            <div class="deposit-row">
+              <div class="deposit-icon" style="background:#FAEEDA"><i class="ti ti-clock" style="color:#854F0B;font-size:18px"></i></div>
+              <div class="deposit-info"><div class="deposit-title">Constructions MPB — Panneau 200A</div><div class="deposit-meta">Demandé le 20 juin · En attente</div><div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div></div>
+              <div class="deposit-amount" style="color:#854F0B">850 $ att.</div>
+            </div>
+            <div class="deposit-row">
+              <div class="deposit-icon" style="background:#FAEEDA"><i class="ti ti-clock" style="color:#854F0B;font-size:18px"></i></div>
+              <div class="deposit-info"><div class="deposit-title">Charest Rénovations — Salle de bain</div><div class="deposit-meta">Demandé le 19 juin · En attente</div><div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div></div>
+              <div class="deposit-amount" style="color:#854F0B">560 $ att.</div>
+            </div>
+            <div class="deposit-row">
+              <div class="deposit-icon" style="background:#FCEBEB"><i class="ti ti-alert-triangle" style="color:#A32D2D;font-size:18px"></i></div>
+              <div class="deposit-info"><div class="deposit-title">Drolet Commerce — Local commercial</div><div class="deposit-meta">Demandé le 28 mai · 25 jours de retard</div><div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div></div>
+              <div class="deposit-amount" style="color:#A32D2D">5 000 $ retard</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RAPPELS -->
+      <div class="panel" id="panel-rappels">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Rappels automatiques</span><span class="badge badge-green">4 actifs</span></div>
+          <div>
+            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-mail"></i></div><div class="rem-info"><div class="rem-title">Rappel soumission — 3 jours sans réponse</div><div class="rem-meta">Courriel auto. · "Avez-vous eu le temps de consulter notre soumission ?"</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
+            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-receipt"></i></div><div class="rem-info"><div class="rem-title">Rappel facture — 7 jours avant échéance</div><div class="rem-meta">Courriel + SMS · "Votre facture arrive à échéance le …"</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
+            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-alert-circle"></i></div><div class="rem-info"><div class="rem-title">Rappel facture en retard — chaque 7 jours</div><div class="rem-meta">Courriel + SMS · Escalade après 30 jours</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
+            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-coin"></i></div><div class="rem-info"><div class="rem-title">Rappel dépôt — 48h après soumission acceptée</div><div class="rem-meta">Courriel · Lien de paiement Interac automatique</div></div><label class="toggle"><input type="checkbox"/><span class="slider-tog"></span></label></div>
+            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-calendar"></i></div><div class="rem-info"><div class="rem-title">Confirmation chantier — 24h avant</div><div class="rem-meta">SMS au client · "Votre chantier est prévu demain à 7h00. Questions ?"</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
+          </div>
+          <div style="margin-top:16px;padding-top:16px;border-top:0.5px solid var(--border)">
+            <div class="card-title" style="margin-bottom:12px">Créer un rappel personnalisé</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Déclencheur</label><select><option>Soumission envoyée</option><option>Facture émise</option><option>Échéance dépassée</option><option>Dépôt demandé</option><option>Chantier planifié</option></select></div>
+              <div class="form-group"><label>Délai</label><select><option>24 heures</option><option>48 heures</option><option>3 jours</option><option>7 jours</option><option>14 jours</option></select></div>
+              <div class="form-group"><label>Canal</label><select><option>Courriel</option><option>SMS</option><option>Courriel + SMS</option></select></div>
+              <div class="form-group"><label>Message</label><input type="text" placeholder="Votre message personnalisé…"/></div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:12px"><i class="ti ti-plus"></i>Créer le rappel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ÉQUIPES -->
+      <div class="panel" id="panel-equipes">
+        <div class="team-grid">
+          <div class="member-card">
+            <div class="member-avatar" style="background:#FAECE7;color:#993C1D">MA</div>
+            <div class="member-name">Marc Audet</div>
+            <div class="member-role"><span class="badge badge-orange">Maître électricien</span></div>
+            <div class="member-stats">
+              <div><span class="member-stat-val">6</span>chantiers</div>
+              <div><span class="member-stat-val">38 h</span>ce mois</div>
+              <div><span class="member-stat-val">14</span>soum.</div>
+            </div>
+          </div>
+          <div class="member-card">
+            <div class="member-avatar" style="background:#E6F1FB;color:#185FA5">JB</div>
+            <div class="member-name">Jean-Fr. Bouchard</div>
+            <div class="member-role"><span class="badge badge-blue">Compagnon élec.</span></div>
+            <div class="member-stats">
+              <div><span class="member-stat-val">4</span>chantiers</div>
+              <div><span class="member-stat-val">32 h</span>ce mois</div>
+              <div><span class="member-stat-val">—</span>soum.</div>
+            </div>
+          </div>
+          <div class="member-card">
+            <div class="member-avatar" style="background:#EAF3DE;color:#3B6D11">KS</div>
+            <div class="member-name">Karine Simard</div>
+            <div class="member-role"><span class="badge badge-green">Apprentie élec.</span></div>
+            <div class="member-stats">
+              <div><span class="member-stat-val">3</span>chantiers</div>
+              <div><span class="member-stat-val">40 h</span>ce mois</div>
+              <div><span class="member-stat-val">—</span>soum.</div>
+            </div>
+          </div>
+          <div class="member-card">
+            <div class="member-avatar" style="background:#FAEEDA;color:#854F0B">PF</div>
+            <div class="member-name">Pascal Fortier</div>
+            <div class="member-role"><span class="badge badge-amber">Sous-traitant</span></div>
+            <div class="member-stats">
+              <div><span class="member-stat-val">2</span>chantiers</div>
+              <div><span class="member-stat-val">16 h</span>ce mois</div>
+              <div><span class="member-stat-val">—</span>soum.</div>
+            </div>
+          </div>
+          <div class="member-card" style="border:1.5px dashed var(--border);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;min-height:160px" onclick="">
+            <i class="ti ti-plus" style="font-size:28px;color:var(--muted);margin-bottom:8px"></i>
+            <div style="font-size:13px;color:var(--muted)">Ajouter un membre</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Horaire de la semaine — 22–28 juin</span></div>
+          <div class="schedule-row">
+            <span class="sched-name"><strong>Marc Audet</strong></span>
+            <div class="sched-days">
+              <div class="sched-day today-col on">L<br><span style="font-size:9px">Lavoie</span></div>
+              <div class="sched-day on">M<br><span style="font-size:9px">Lavoie</span></div>
+              <div class="sched-day on">M<br><span style="font-size:9px">MPB</span></div>
+              <div class="sched-day on">J<br><span style="font-size:9px">Libre</span></div>
+              <div class="sched-day">V<br><span style="font-size:9px">Congé</span></div>
+              <div class="sched-day">S</div>
+              <div class="sched-day">D</div>
+            </div>
+            <span class="sched-hours">32 h prév.</span>
+          </div>
+          <div class="schedule-row">
+            <span class="sched-name">Jean-Fr. Bouchard</span>
+            <div class="sched-days">
+              <div class="sched-day today-col on">L<br><span style="font-size:9px">Lavoie</span></div>
+              <div class="sched-day on">M<br><span style="font-size:9px">Lavoie</span></div>
+              <div class="sched-day">M</div>
+              <div class="sched-day on">J<br><span style="font-size:9px">Beau.</span></div>
+              <div class="sched-day on">V<br><span style="font-size:9px">Beau.</span></div>
+              <div class="sched-day">S</div>
+              <div class="sched-day">D</div>
+            </div>
+            <span class="sched-hours">28 h prév.</span>
+          </div>
+          <div class="schedule-row">
+            <span class="sched-name">Karine Simard</span>
+            <div class="sched-days">
+              <div class="sched-day today-col">L</div>
+              <div class="sched-day on">M<br><span style="font-size:9px">MPB</span></div>
+              <div class="sched-day on">M<br><span style="font-size:9px">MPB</span></div>
+              <div class="sched-day on">J<br><span style="font-size:9px">Beau.</span></div>
+              <div class="sched-day on">V<br><span style="font-size:9px">Beau.</span></div>
+              <div class="sched-day">S</div>
+              <div class="sched-day">D</div>
+            </div>
+            <span class="sched-hours">36 h prév.</span>
+          </div>
+          <div class="schedule-row">
+            <span class="sched-name">Pascal Fortier</span>
+            <div class="sched-days">
+              <div class="sched-day today-col">L</div>
+              <div class="sched-day">M</div>
+              <div class="sched-day">M</div>
+              <div class="sched-day on">J<br><span style="font-size:9px">Beau.</span></div>
+              <div class="sched-day on">V<br><span style="font-size:9px">Beau.</span></div>
+              <div class="sched-day">S</div>
+              <div class="sched-day">D</div>
+            </div>
+            <span class="sched-hours">16 h prév.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Assigner un employé à un chantier</span></div>
+          <div class="form-grid">
+            <div class="form-group"><label>Employé</label><select><option>Jean-Fr. Bouchard</option><option>Karine Simard</option><option>Pascal Fortier</option></select></div>
+            <div class="form-group"><label>Chantier</label><select><option>Résidences Lavoie — Câblage</option><option>Constructions MPB — Panneau</option><option>Beaulieu & Fils — Éclairage</option></select></div>
+            <div class="form-group"><label>Date</label><input type="date"/></div>
+            <div class="form-group"><label>Heures prévues</label><input type="number" placeholder="8"/></div>
+            <div class="form-group full"><label>Note</label><input type="text" placeholder="Instructions particulières…"/></div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:4px"><i class="ti ti-users"></i>Assigner</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const titles={dashboard:'Tableau de bord',soumissions:'Soumissions',factures:'Factures',calendrier:'Calendrier des chantiers',depots:'Gestion des dépôts',rappels:'Rappels automatiques',equipes:'Gestion d\'équipe'};
+const subs={dashboard:'Lundi 22 juin 2026',soumissions:'Créez une soumission en 2 minutes — ou laissez l\'IA le faire',factures:'Suivi en temps réel',calendrier:'Planification de vos chantiers',depots:'Gestion des acomptes',rappels:'Automatisez vos suivis',equipes:'Horaires, disponibilités et assignations'};
+
+function show(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+  document.getElementById('topbar-title').textContent=titles[id]||id;
+  document.getElementById('topbar-sub').textContent=subs[id]||'';
+}
+
+function fmt(n){return n.toLocaleString('fr-CA',{minimumFractionDigits:2,maximumFractionDigits:2})+' $'}
+
+function calcSoum(){
+  const mo=parseFloat(document.getElementById('mo').value)||0;
+  const mat=parseFloat(document.getElementById('mat').value)||0;
+  const dep=parseFloat(document.getElementById('dep').value)||0;
+  const pct=parseFloat(document.getElementById('marge').value)||0;
+  const sub=mo+mat+dep;
+  const marge=sub*pct/100;
+  const stot=sub+marge;
+  const tps=stot*0.05;
+  const tvq=stot*0.09975;
+  const total=stot+tps+tvq;
+  document.getElementById('s-mo').textContent=fmt(mo);
+  document.getElementById('s-mat').textContent=fmt(mat);
+  document.getElementById('s-dep').textContent=fmt(dep);
+  document.getElementById('s-marge').textContent=fmt(marge);
+  document.getElementById('s-sub').textContent=fmt(stot);
+  document.getElementById('s-tax').textContent=fmt(tps+tvq);
+  document.getElementById('s-total').textContent=fmt(total);
+  document.getElementById('lbl-marge').textContent='Marge bénéficiaire ('+pct+' %)';
+}
+
+async function genererSoumission(){
+  const prompt=document.getElementById('ai-prompt').value.trim();
+  if(!prompt)return;
+  const loading=document.getElementById('ai-loading');
+  const result=document.getElementById('ai-result');
+  loading.classList.add('visible');
+  result.classList.remove('visible');
+  result.textContent='';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        system:`Tu es un assistant pour un électricien entrepreneur au Québec. À partir d'une description informelle, génère une soumission professionnelle structurée. Réponds en français québécois professionnel.
+
+Réponds en JSON uniquement, sans balises markdown, ce format exact:
+{
+  "client": "...",
+  "type": "Électricité",
+  "adresse": "...",
+  "description": "...",
+  "mo": 0,
+  "mat": 0,
+  "dep": 0,
+  "marge": 15,
+  "notes": "..."
+}
+
+Estime les montants de façon réaliste pour le marché québécois (taux horaire électricien ~85-95$/h). Si une info manque, mets une valeur raisonnable.`,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await resp.json();
+    const text=data.content.map(i=>i.text||'').join('').trim();
+    let parsed;
+    try{parsed=JSON.parse(text);}catch{parsed=null;}
+    if(parsed){
+      if(parsed.client)document.getElementById('f-client').value=parsed.client;
+      if(parsed.type)document.getElementById('f-type').value=parsed.type;
+      if(parsed.adresse)document.getElementById('f-adresse').value=parsed.adresse;
+      if(parsed.description)document.getElementById('f-desc').value=parsed.description;
+      if(parsed.mo){document.getElementById('mo').value=parsed.mo;}
+      if(parsed.mat){document.getElementById('mat').value=parsed.mat;}
+      if(parsed.dep){document.getElementById('dep').value=parsed.dep;}
+      if(parsed.marge){document.getElementById('marge').value=parsed.marge;}
+      calcSoum();
+      result.innerHTML='<strong>✓ Soumission générée</strong>' + (parsed.notes?'<br><span style="color:var(--orange-dark)">'+parsed.notes+'</span>':'') + '<br><span style="font-size:11px;opacity:0.7">Les champs ont été remplis automatiquement. Vérifiez et ajustez au besoin.</span>';
+      result.classList.add('visible');
+    }else{
+      result.textContent='Réponse reçue: '+text;
+      result.classList.add('visible');
+    }
+  }catch(e){
+    result.textContent='Erreur de connexion à l\'IA. Vérifiez votre connexion.';
+    result.classList.add('visible');
+  }
+  loading.classList.remove('visible');
+}
+
+document.getElementById('ai-prompt').addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&e.metaKey)genererSoumission();
+});
+
+function buildCal(){
+  const cal=document.getElementById('cal-main');
+  const events=[1,5,9,10,17,22,23,24,25,26];
+  let html='';
+  for(let d=1;d<=30;d++){
+    const isToday=d===22;
+    const hasEv=events.includes(d);
+    html+=`<div class="cal-day${isToday?' today':''}${hasEv?' has-event':''}">${d}</div>`;
+  }
+  cal.innerHTML=html;
+}
+buildCal();
+</script>
+</body>
+</html>
