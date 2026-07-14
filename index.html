@@ -9,11 +9,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F4F0;color:#1a1a18;min-height:100vh}
-:root{
-  --orange:#D85A30;--orange-light:#FAECE7;--orange-dark:#993C1D;
-  --border:#e0ddd6;--card:#fff;--surface:#F5F4F0;
-  --text:#1a1a18;--muted:#888780;--r:12px;--rm:8px;
-}
+:root{--orange:#D85A30;--orange-light:#FAECE7;--orange-dark:#993C1D;--border:#e0ddd6;--card:#fff;--surface:#F5F4F0;--text:#1a1a18;--muted:#888780;--r:12px;--rm:8px}
 .app{display:flex;height:100vh;overflow:hidden}
 .sidebar{width:230px;flex-shrink:0;background:var(--card);border-right:0.5px solid var(--border);display:flex;flex-direction:column}
 .logo{padding:20px 16px 16px;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid var(--border)}
@@ -28,7 +24,6 @@ nav{padding:12px 8px;flex:1;overflow-y:auto}
 .nav-item.active{background:var(--orange-light);color:var(--orange-dark);font-weight:500}
 .nav-item.active i{color:var(--orange)}
 .nav-item i{font-size:17px;width:20px;flex-shrink:0}
-.nav-badge{margin-left:auto;background:var(--orange);color:#fff;font-size:10px;font-weight:600;padding:2px 6px;border-radius:10px;min-width:20px;text-align:center}
 .sidebar-footer{padding:14px 16px;border-top:0.5px solid var(--border)}
 .user-row{display:flex;align-items:center;gap:9px}
 .avatar{width:32px;height:32px;border-radius:50%;background:var(--orange-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--orange-dark);flex-shrink:0}
@@ -41,7 +36,7 @@ nav{padding:12px 8px;flex:1;overflow-y:auto}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--rm);border:0.5px solid var(--border);background:var(--card);font-size:13px;font-weight:500;cursor:pointer;color:var(--text);transition:all 0.12s;font-family:inherit}
 .btn:hover{background:var(--surface)}
 .btn-primary{background:var(--orange);color:#fff;border-color:var(--orange)}
-.btn-primary:hover{background:var(--orange-dark);border-color:var(--orange-dark)}
+.btn-primary:hover{background:var(--orange-dark)}
 .btn-sm{padding:5px 10px;font-size:12px}
 .btn:disabled{opacity:0.5;cursor:not-allowed}
 .content{padding:24px;flex:1}
@@ -92,10 +87,11 @@ textarea{resize:vertical;min-height:72px}
 .dot-anim span:nth-child(2){animation-delay:.15s}
 .dot-anim span:nth-child(3){animation-delay:.3s}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
-.toast{position:fixed;bottom:24px;right:24px;padding:12px 18px;border-radius:var(--rm);font-size:13px;font-weight:500;color:#fff;z-index:999;opacity:0;transform:translateY(10px);transition:all 0.25s;pointer-events:none}
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 18px;border-radius:var(--rm);font-size:13px;font-weight:500;color:#fff;z-index:999;opacity:0;transform:translateY(10px);transition:all 0.25s;pointer-events:none;max-width:320px}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast.success{background:#3B6D11}
 .toast.error{background:#A32D2D}
+.toast.info{background:#185FA5}
 .empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
 .empty-state i{font-size:36px;display:block;margin-bottom:10px;opacity:0.4}
 .empty-state p{font-size:13px}
@@ -124,12 +120,32 @@ textarea{resize:vertical;min-height:72px}
 .member-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}
 .member-avatar{width:52px;height:52px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600}
 .member-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
-.member-role{font-size:12px;color:var(--muted);margin-bottom:10px}
+.courriel-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;display:none;align-items:center;justify-content:center}
+.courriel-modal.visible{display:flex}
+.courriel-box{background:var(--card);border-radius:var(--r);padding:24px;width:480px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.12)}
+.courriel-title{font-size:15px;font-weight:600;margin-bottom:16px;color:var(--text)}
 </style>
 </head>
 <body>
 
 <div class="toast" id="toast"></div>
+
+<!-- MODAL ENVOI COURRIEL -->
+<div class="courriel-modal" id="modal-courriel">
+  <div class="courriel-box">
+    <div class="courriel-title"><i class="ti ti-mail"></i> Envoyer par courriel</div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Courriel du destinataire</label><input type="email" id="m-to" placeholder="client@exemple.com"/></div>
+      <div class="form-group full"><label>Sujet</label><input type="text" id="m-subject" placeholder="Votre soumission ChantierPro"/></div>
+      <div class="form-group full"><label>Message additionnel (optionnel)</label><textarea id="m-message" placeholder="Bonjour, veuillez trouver ci-joint votre soumission..."></textarea></div>
+      <div class="form-group"><label>Envoyer une copie à</label><input type="email" id="m-cc" placeholder="moi@exemple.com"/></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-primary" id="btn-envoyer-courriel" onclick="envoyerCourriel()"><i class="ti ti-send"></i>Envoyer</button>
+      <button class="btn" onclick="fermerModal()">Annuler</button>
+    </div>
+  </div>
+</div>
 
 <div class="app">
   <div class="sidebar">
@@ -182,11 +198,11 @@ textarea{resize:vertical;min-height:72px}
         </div>
         <div class="card">
           <div class="card-header"><span class="card-title">Dernières soumissions</span></div>
-          <div id="dash-soumissions"><div class="loading-row"><i class="ti ti-loader-2"></i> Chargement…</div></div>
+          <div id="dash-soumissions"><div class="loading-row">Chargement…</div></div>
         </div>
         <div class="card">
           <div class="card-header"><span class="card-title">Dernières factures</span></div>
-          <div id="dash-factures"><div class="loading-row"><i class="ti ti-loader-2"></i> Chargement…</div></div>
+          <div id="dash-factures"><div class="loading-row">Chargement…</div></div>
         </div>
       </div>
 
@@ -201,7 +217,7 @@ textarea{resize:vertical;min-height:72px}
             </div>
           </div>
           <div class="ai-prompt-area">
-            <textarea id="ai-prompt" placeholder="Ex: Installation panneau 200A pour maison à Sherbrooke, prise pour thermopompe et 3 circuits 240V, client Résidences Lavoie, environ 2 jours de travail..."></textarea>
+            <textarea id="ai-prompt" placeholder="Ex: Installation panneau 200A pour maison à Sherbrooke, client Résidences Lavoie, environ 2 jours de travail..."></textarea>
             <button class="btn btn-primary ai-btn-inside" onclick="genererSoumission()"><i class="ti ti-sparkles"></i>Générer</button>
           </div>
           <div class="ai-loading" id="ai-loading"><div class="dot-anim"><span></span><span></span><span></span></div>L'IA rédige votre soumission…</div>
@@ -211,6 +227,7 @@ textarea{resize:vertical;min-height:72px}
           <div class="card-header"><span class="card-title">Nouvelle soumission</span></div>
           <div class="form-grid">
             <div class="form-group"><label>Nom du client</label><input type="text" id="f-client" placeholder="Ex: Résidences Lavoie inc."/></div>
+            <div class="form-group"><label>Courriel du client</label><input type="email" id="f-courriel-client" placeholder="client@exemple.com"/></div>
             <div class="form-group"><label>Type de travaux</label><select id="f-type"><option>Électricité</option><option>Plomberie</option><option>Menuiserie</option><option>Excavation</option><option>Multi-métiers</option></select></div>
             <div class="form-group"><label>Adresse du chantier</label><input type="text" id="f-adresse" placeholder="123 rue des Érables, Sherbrooke"/></div>
             <div class="form-group"><label>Date de début prévue</label><input type="date" id="f-date"/></div>
@@ -230,8 +247,9 @@ textarea{resize:vertical;min-height:72px}
             <div class="soum-line"><span>TPS + TVQ</span><span id="s-tax">0,00 $</span></div>
             <div class="soum-line"><span>TOTAL TTC</span><span id="s-total">0,00 $</span></div>
           </div>
-          <div style="display:flex;gap:8px;margin-top:16px">
+          <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
             <button class="btn btn-primary" id="btn-sauvegarder" onclick="sauvegarderSoumission()"><i class="ti ti-device-floppy"></i>Sauvegarder</button>
+            <button class="btn" onclick="ouvrirModalSoumission()"><i class="ti ti-mail"></i>Envoyer par courriel</button>
           </div>
         </div>
         <div class="card">
@@ -247,12 +265,16 @@ textarea{resize:vertical;min-height:72px}
           <div id="form-facture" style="display:none">
             <div class="form-grid" style="margin-bottom:12px">
               <div class="form-group"><label>Client</label><input type="text" id="fact-client" placeholder="Nom du client"/></div>
+              <div class="form-group"><label>Courriel du client</label><input type="email" id="fact-courriel" placeholder="client@exemple.com"/></div>
               <div class="form-group"><label>Travaux</label><input type="text" id="fact-travaux" placeholder="Description courte"/></div>
               <div class="form-group"><label>Montant TTC ($)</label><input type="number" id="fact-montant" placeholder="0.00"/></div>
               <div class="form-group"><label>Date d'échéance</label><input type="date" id="fact-echeance"/></div>
               <div class="form-group"><label>Statut</label><select id="fact-statut"><option value="envoyée">Envoyée</option><option value="en attente">En attente</option><option value="payée">Payée</option><option value="en retard">En retard</option></select></div>
             </div>
-            <button class="btn btn-primary" onclick="sauvegarderFacture()"><i class="ti ti-device-floppy"></i>Sauvegarder</button>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary" onclick="sauvegarderFacture()"><i class="ti ti-device-floppy"></i>Sauvegarder</button>
+              <button class="btn" onclick="sauvegarderEtEnvoyerFacture()"><i class="ti ti-mail"></i>Sauvegarder et envoyer</button>
+            </div>
           </div>
         </div>
         <div class="card">
@@ -268,13 +290,17 @@ textarea{resize:vertical;min-height:72px}
           <div id="form-depot" style="display:none">
             <div class="form-grid" style="margin-bottom:12px">
               <div class="form-group"><label>Client</label><input type="text" id="dep-client" placeholder="Nom du client"/></div>
+              <div class="form-group"><label>Courriel du client</label><input type="email" id="dep-courriel" placeholder="client@exemple.com"/></div>
               <div class="form-group"><label>Projet</label><input type="text" id="dep-projet" placeholder="Description du projet"/></div>
               <div class="form-group"><label>Montant ($)</label><input type="number" id="dep-montant" placeholder="0.00"/></div>
               <div class="form-group"><label>Mode de paiement</label><select id="dep-mode"><option>Virement Interac</option><option>Chèque</option><option>Carte de crédit</option><option>Comptant</option></select></div>
               <div class="form-group"><label>Date de réception</label><input type="date" id="dep-date"/></div>
               <div class="form-group"><label>Statut</label><select id="dep-statut"><option value="reçu">Reçu</option><option value="en_attente">En attente</option><option value="en_retard">En retard</option></select></div>
             </div>
-            <button class="btn btn-primary" onclick="sauvegarderDepot()"><i class="ti ti-device-floppy"></i>Sauvegarder</button>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary" onclick="sauvegarderDepot()"><i class="ti ti-device-floppy"></i>Sauvegarder</button>
+              <button class="btn" onclick="sauvegarderEtEnvoyerDepot()"><i class="ti ti-mail"></i>Envoyer confirmation</button>
+            </div>
           </div>
         </div>
         <div class="card">
@@ -288,12 +314,21 @@ textarea{resize:vertical;min-height:72px}
         <div class="card">
           <div class="card-header"><span class="card-title">Rappels automatiques</span><span class="badge badge-green">4 actifs</span></div>
           <div>
-            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-mail"></i></div><div class="rem-info"><div class="rem-title">Rappel soumission — 3 jours sans réponse</div><div class="rem-meta">Courriel auto. · "Avez-vous eu le temps de consulter notre soumission ?"</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
-            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-receipt"></i></div><div class="rem-info"><div class="rem-title">Rappel facture — 7 jours avant échéance</div><div class="rem-meta">Courriel + SMS</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
-            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-alert-circle"></i></div><div class="rem-info"><div class="rem-title">Rappel facture en retard — chaque 7 jours</div><div class="rem-meta">Courriel + SMS · Escalade après 30 jours</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
-            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-coin"></i></div><div class="rem-info"><div class="rem-title">Rappel dépôt — 48h après soumission acceptée</div><div class="rem-meta">Courriel · Lien Interac automatique</div></div><label class="toggle"><input type="checkbox"/><span class="slider-tog"></span></label></div>
-            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-calendar"></i></div><div class="rem-info"><div class="rem-title">Confirmation chantier — 24h avant</div><div class="rem-meta">SMS au client</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
+            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-mail"></i></div><div class="rem-info"><div class="rem-title">Rappel soumission — 3 jours sans réponse</div><div class="rem-meta">Courriel auto. via Resend</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
+            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-receipt"></i></div><div class="rem-info"><div class="rem-title">Rappel facture — 7 jours avant échéance</div><div class="rem-meta">Courriel automatique via Resend</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
+            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-alert-circle"></i></div><div class="rem-info"><div class="rem-title">Rappel facture en retard — chaque 7 jours</div><div class="rem-meta">Courriel + escalade après 30 jours</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
+            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-coin"></i></div><div class="rem-info"><div class="rem-title">Rappel dépôt — 48h après soumission acceptée</div><div class="rem-meta">Courriel avec lien Interac</div></div><label class="toggle"><input type="checkbox"/><span class="slider-tog"></span></label></div>
+            <div class="reminder-item"><div class="rem-icon"><i class="ti ti-calendar"></i></div><div class="rem-info"><div class="rem-title">Confirmation chantier — 24h avant</div><div class="rem-meta">Courriel au client</div></div><label class="toggle"><input type="checkbox" checked/><span class="slider-tog"></span></label></div>
           </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Envoyer un rappel manuel</span></div>
+          <div class="form-grid">
+            <div class="form-group"><label>Courriel du client</label><input type="email" id="rappel-to" placeholder="client@exemple.com"/></div>
+            <div class="form-group"><label>Type de rappel</label><select id="rappel-type"><option value="soumission">Rappel soumission</option><option value="facture">Rappel facture</option><option value="depot">Rappel dépôt</option><option value="chantier">Confirmation chantier</option></select></div>
+            <div class="form-group full"><label>Message personnalisé</label><textarea id="rappel-msg" placeholder="Bonjour, je voulais faire un suivi concernant..."></textarea></div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:8px" onclick="envoyerRappelManuel()"><i class="ti ti-send"></i>Envoyer le rappel</button>
         </div>
       </div>
 
@@ -321,11 +356,13 @@ textarea{resize:vertical;min-height:72px}
 </div>
 
 <script>
-// ─── SUPABASE ───────────────────────────────────────────────
 const SUPABASE_URL = 'https://aqhnsozadvhkjtqdkgjq.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxaG5zb3phZHZoa2p0cWRrZ2pxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5ODI1NTEsImV4cCI6MjA5OTU1ODU1MX0.34YrPGVwuE_95eHBA3SZPD2Nm16tA3Qgol7jfs2E53c';
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// État courant pour le modal courriel
+let soumissionCourante = null;
 
 // ─── NAVIGATION ─────────────────────────────────────────────
 const titres = {dashboard:'Tableau de bord',soumissions:'Soumissions',factures:'Factures',depots:'Dépôts',rappels:'Rappels automatiques',equipes:'Gestion d\'équipe'};
@@ -340,18 +377,14 @@ function show(id, el) {
   if (id === 'depots') chargerDepots();
   if (id === 'equipes') chargerEquipe();
 }
-
-function toggleForm(id) {
-  const el = document.getElementById(id);
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
+function toggleForm(id) { const el = document.getElementById(id); el.style.display = el.style.display === 'none' ? 'block' : 'none'; }
 
 // ─── TOAST ──────────────────────────────────────────────────
 function toast(msg, type = 'success') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast ' + type + ' show';
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(() => t.classList.remove('show'), 4000);
 }
 
 // ─── FORMATAGE ──────────────────────────────────────────────
@@ -374,7 +407,7 @@ function calcSoum() {
   const sub = mo + mat + dep;
   const marge = sub * pct / 100;
   const stot = sub + marge;
-  const tax = stot * (0.05 + 0.09975);
+  const tax = stot * 0.14975;
   const total = stot + tax;
   document.getElementById('s-mo').textContent = fmt(mo);
   document.getElementById('s-mat').textContent = fmt(mat);
@@ -384,295 +417,347 @@ function calcSoum() {
   document.getElementById('s-tax').textContent = fmt(tax);
   document.getElementById('s-total').textContent = fmt(total);
   document.getElementById('lbl-marge').textContent = `Marge (${pct} %)`;
-  return total;
+  return { mo, mat, dep, marge: pct, stot, tax, total };
+}
+
+// ─── ENVOI COURRIEL via API Route Vercel ────────────────────
+async function envoyerEmail(to, subject, html, cc) {
+  try {
+    const body = { to, subject, html };
+    if (cc) body.cc = cc;
+    const resp = await fetch('/api/envoyer-courriel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    return resp.ok;
+  } catch(e) {
+    return false;
+  }
+}
+
+function htmlSoumission(data) {
+  return `
+  <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px;background:#fff">
+    <div style="background:#D85A30;padding:20px 24px;border-radius:10px 10px 0 0">
+      <h1 style="color:#fff;margin:0;font-size:22px">🏗️ ChantierPro</h1>
+      <p style="color:#ffd4c4;margin:4px 0 0;font-size:13px">Soumission de travaux</p>
+    </div>
+    <div style="border:1px solid #e0ddd6;border-top:none;padding:24px;border-radius:0 0 10px 10px">
+      <p style="font-size:15px;color:#1a1a18">Bonjour <strong>${data.client_nom}</strong>,</p>
+      <p style="color:#5F5E5A;font-size:14px">Veuillez trouver ci-dessous votre soumission pour les travaux de <strong>${data.type_travaux}</strong>.</p>
+      ${data.adresse ? `<p style="color:#5F5E5A;font-size:13px">📍 ${data.adresse}</p>` : ''}
+      ${data.description ? `<p style="color:#5F5E5A;font-size:13px;background:#F5F4F0;padding:12px;border-radius:6px">${data.description}</p>` : ''}
+      <table style="width:100%;border-collapse:collapse;margin-top:20px">
+        <tr style="background:#F5F4F0"><td style="padding:10px 12px;font-size:13px;color:#5F5E5A">Main-d'œuvre</td><td style="padding:10px 12px;font-size:13px;text-align:right;font-weight:500">${fmt(data.mo)}</td></tr>
+        <tr><td style="padding:10px 12px;font-size:13px;color:#5F5E5A">Matériaux</td><td style="padding:10px 12px;font-size:13px;text-align:right;font-weight:500">${fmt(data.materiaux)}</td></tr>
+        <tr style="background:#F5F4F0"><td style="padding:10px 12px;font-size:13px;color:#5F5E5A">Déplacement</td><td style="padding:10px 12px;font-size:13px;text-align:right;font-weight:500">${fmt(data.deplacement)}</td></tr>
+        <tr><td style="padding:10px 12px;font-size:13px;color:#5F5E5A">TPS + TVQ</td><td style="padding:10px 12px;font-size:13px;text-align:right;font-weight:500">${fmt(data.total_ttc * 0.14975 / 1.14975)}</td></tr>
+        <tr style="background:#D85A30"><td style="padding:12px;font-size:15px;font-weight:700;color:#fff">TOTAL TTC</td><td style="padding:12px;font-size:15px;font-weight:700;color:#fff;text-align:right">${fmt(data.total_ttc)}</td></tr>
+      </table>
+      <p style="margin-top:24px;color:#5F5E5A;font-size:13px">Cette soumission est valide 30 jours. N'hésitez pas à nous contacter pour toute question.</p>
+      <p style="color:#888780;font-size:12px;margin-top:32px;border-top:1px solid #e0ddd6;padding-top:16px">Envoyé via ChantierPro</p>
+    </div>
+  </div>`;
+}
+
+function htmlFacture(f) {
+  return `
+  <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px;background:#fff">
+    <div style="background:#D85A30;padding:20px 24px;border-radius:10px 10px 0 0">
+      <h1 style="color:#fff;margin:0;font-size:22px">🏗️ ChantierPro</h1>
+      <p style="color:#ffd4c4;margin:4px 0 0;font-size:13px">Facture ${f.numero || ''}</p>
+    </div>
+    <div style="border:1px solid #e0ddd6;border-top:none;padding:24px;border-radius:0 0 10px 10px">
+      <p style="font-size:15px;color:#1a1a18">Bonjour <strong>${f.client_nom}</strong>,</p>
+      <p style="color:#5F5E5A;font-size:14px">Voici votre facture pour : <strong>${f.travaux || ''}</strong></p>
+      <table style="width:100%;border-collapse:collapse;margin-top:20px">
+        <tr style="background:#D85A30"><td style="padding:12px;font-size:15px;font-weight:700;color:#fff">Montant total TTC</td><td style="padding:12px;font-size:15px;font-weight:700;color:#fff;text-align:right">${fmt(f.montant)}</td></tr>
+      </table>
+      ${f.date_echeance ? `<p style="margin-top:16px;color:#854F0B;font-size:13px;background:#FAEEDA;padding:10px 14px;border-radius:6px">⚠️ Date d'échéance : <strong>${fmtDate(f.date_echeance)}</strong></p>` : ''}
+      <p style="color:#888780;font-size:12px;margin-top:32px;border-top:1px solid #e0ddd6;padding-top:16px">Envoyé via ChantierPro</p>
+    </div>
+  </div>`;
+}
+
+// ─── MODAL COURRIEL ─────────────────────────────────────────
+function ouvrirModalSoumission() {
+  const client = document.getElementById('f-client').value;
+  const courriel = document.getElementById('f-courriel-client').value;
+  if (!client) { toast('Remplis d\'abord le nom du client', 'error'); return; }
+  soumissionCourante = {
+    client_nom: client,
+    type_travaux: document.getElementById('f-type').value,
+    adresse: document.getElementById('f-adresse').value,
+    description: document.getElementById('f-desc').value,
+    mo: parseFloat(document.getElementById('mo').value) || 0,
+    materiaux: parseFloat(document.getElementById('mat').value) || 0,
+    deplacement: parseFloat(document.getElementById('dep').value) || 0,
+    total_ttc: parseFloat(document.getElementById('s-total').textContent.replace(/[^0-9,.]/g,'').replace(',','.')) || 0,
+  };
+  document.getElementById('m-to').value = courriel || '';
+  document.getElementById('m-subject').value = `Soumission de travaux — ${client}`;
+  document.getElementById('modal-courriel').classList.add('visible');
+}
+
+function fermerModal() {
+  document.getElementById('modal-courriel').classList.remove('visible');
+  soumissionCourante = null;
+}
+
+async function envoyerCourriel() {
+  const to = document.getElementById('m-to').value;
+  const subject = document.getElementById('m-subject').value;
+  const msg = document.getElementById('m-message').value;
+  const cc = document.getElementById('m-cc').value;
+  if (!to) { toast('Entre un courriel destinataire', 'error'); return; }
+  const btn = document.getElementById('btn-envoyer-courriel');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ti ti-loader-2"></i> Envoi…';
+  let html = htmlSoumission(soumissionCourante || {client_nom:'Client', type_travaux:'', mo:0, materiaux:0, deplacement:0, total_ttc:0});
+  if (msg) html = `<p style="font-family:sans-serif;padding:16px 32px;color:#1a1a18">${msg}</p>` + html;
+  const ok = await envoyerEmail(to, subject, html, cc || null);
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ti ti-send"></i>Envoyer';
+  if (ok) { toast('✉️ Courriel envoyé avec succès!'); fermerModal(); }
+  else toast('Erreur d\'envoi. Vérifie ta clé Resend dans Vercel.', 'error');
+}
+
+// ─── RAPPEL MANUEL ──────────────────────────────────────────
+async function envoyerRappelManuel() {
+  const to = document.getElementById('rappel-to').value;
+  const type = document.getElementById('rappel-type').value;
+  const msg = document.getElementById('rappel-msg').value;
+  if (!to) { toast('Entre un courriel', 'error'); return; }
+  const sujets = { soumission:'Suivi de votre soumission — ChantierPro', facture:'Rappel de paiement — ChantierPro', depot:'Rappel de dépôt — ChantierPro', chantier:'Confirmation de votre chantier — ChantierPro' };
+  const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px"><div style="background:#D85A30;padding:16px 24px;border-radius:10px 10px 0 0"><h2 style="color:#fff;margin:0">🏗️ ChantierPro</h2></div><div style="border:1px solid #e0ddd6;border-top:none;padding:24px;border-radius:0 0 10px 10px"><p style="color:#1a1a18;font-size:14px">${msg || 'Bonjour, nous voulions faire un suivi avec vous.'}</p><p style="color:#888780;font-size:12px;margin-top:24px;border-top:1px solid #e0ddd6;padding-top:16px">Envoyé via ChantierPro</p></div></div>`;
+  const ok = await envoyerEmail(to, sujets[type], html);
+  if (ok) { toast('✉️ Rappel envoyé!'); document.getElementById('rappel-to').value = ''; document.getElementById('rappel-msg').value = ''; }
+  else toast('Erreur d\'envoi', 'error');
 }
 
 // ─── SAUVEGARDE SOUMISSION ──────────────────────────────────
 async function sauvegarderSoumission() {
   const btn = document.getElementById('btn-sauvegarder');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="ti ti-loader-2"></i> Sauvegarde…';
+  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader-2"></i> Sauvegarde…';
   const mo = parseFloat(document.getElementById('mo').value) || 0;
   const mat = parseFloat(document.getElementById('mat').value) || 0;
   const dep = parseFloat(document.getElementById('dep').value) || 0;
   const pct = parseFloat(document.getElementById('marge').value) || 15;
   const stot = (mo + mat + dep) * (1 + pct/100);
-  const total = stot * (1 + 0.14975);
+  const total = Math.round(stot * 1.14975 * 100) / 100;
   const { error } = await db.from('soumissions').insert({
     client_nom: document.getElementById('f-client').value,
     type_travaux: document.getElementById('f-type').value,
     adresse: document.getElementById('f-adresse').value,
     description: document.getElementById('f-desc').value,
     date_debut: document.getElementById('f-date').value || null,
-    mo, materiaux: mat, deplacement: dep, marge: pct,
-    total_ttc: Math.round(total * 100) / 100,
+    mo, materiaux: mat, deplacement: dep, marge: pct, total_ttc: total,
     statut: document.getElementById('f-statut').value,
   });
-  btn.disabled = false;
-  btn.innerHTML = '<i class="ti ti-device-floppy"></i> Sauvegarder';
+  btn.disabled = false; btn.innerHTML = '<i class="ti ti-device-floppy"></i> Sauvegarder';
   if (error) { toast('Erreur : ' + error.message, 'error'); return; }
-  toast('Soumission sauvegardée !');
-  document.getElementById('f-client').value = '';
-  document.getElementById('f-desc').value = '';
-  chargerSoumissions();
-  chargerDashboard();
+  toast('✅ Soumission sauvegardée!');
+  chargerSoumissions(); chargerDashboard();
 }
 
-// ─── CHARGER SOUMISSIONS ────────────────────────────────────
 async function chargerSoumissions() {
   const el = document.getElementById('liste-soumissions');
   el.innerHTML = '<div class="loading-row">Chargement…</div>';
-  const { data, error } = await db.from('soumissions').select('*').order('created_at', {ascending: false});
-  if (error || !data?.length) {
-    el.innerHTML = '<div class="empty-state"><i class="ti ti-file-invoice"></i><p>Aucune soumission pour l\'instant.<br>Crée-en une ci-dessus !</p></div>';
-    return;
-  }
-  el.innerHTML = `<table>
-    <tr><th>Client</th><th>Type</th><th>Total TTC</th><th>Statut</th><th>Date</th><th></th></tr>
-    ${data.map(s => `<tr>
-      <td><strong>${s.client_nom}</strong></td>
-      <td>${s.type_travaux || '—'}</td>
-      <td>${fmt(s.total_ttc)}</td>
-      <td>${badgeStatut(s.statut)}</td>
-      <td>${fmtDate(s.created_at)}</td>
-      <td><button class="btn btn-sm" style="color:#A32D2D;border-color:#fcc" onclick="supprimerSoumission('${s.id}')"><i class="ti ti-trash"></i></button></td>
-    </tr>`).join('')}
-  </table>`;
+  const { data } = await db.from('soumissions').select('*').order('created_at', {ascending:false});
+  if (!data?.length) { el.innerHTML = '<div class="empty-state"><i class="ti ti-file-invoice"></i><p>Aucune soumission pour l\'instant.</p></div>'; return; }
+  el.innerHTML = `<table><tr><th>Client</th><th>Type</th><th>Total TTC</th><th>Statut</th><th>Date</th><th></th></tr>
+    ${data.map(s => `<tr><td><strong>${s.client_nom}</strong></td><td>${s.type_travaux||'—'}</td><td>${fmt(s.total_ttc)}</td><td>${badgeStatut(s.statut)}</td><td>${fmtDate(s.created_at)}</td>
+    <td style="display:flex;gap:4px">
+      <button class="btn btn-sm" onclick="envoyerSoumissionExistante(${JSON.stringify(s).replace(/"/g,'&quot;')})"><i class="ti ti-mail"></i></button>
+      <button class="btn btn-sm" style="color:#A32D2D;border-color:#fcc" onclick="supprimerSoumission('${s.id}')"><i class="ti ti-trash"></i></button>
+    </td></tr>`).join('')}</table>`;
+}
+
+function envoyerSoumissionExistante(s) {
+  soumissionCourante = s;
+  document.getElementById('m-to').value = '';
+  document.getElementById('m-subject').value = `Soumission de travaux — ${s.client_nom}`;
+  document.getElementById('modal-courriel').classList.add('visible');
 }
 
 async function supprimerSoumission(id) {
   if (!confirm('Supprimer cette soumission ?')) return;
   await db.from('soumissions').delete().eq('id', id);
-  toast('Soumission supprimée');
-  chargerSoumissions();
-  chargerDashboard();
+  toast('Soumission supprimée'); chargerSoumissions(); chargerDashboard();
 }
 
 // ─── FACTURES ───────────────────────────────────────────────
 async function sauvegarderFacture() {
-  const { error } = await db.from('factures').insert({
+  const { error, data } = await db.from('factures').insert({
     client_nom: document.getElementById('fact-client').value,
     travaux: document.getElementById('fact-travaux').value,
     montant: parseFloat(document.getElementById('fact-montant').value) || 0,
     date_echeance: document.getElementById('fact-echeance').value || null,
     statut: document.getElementById('fact-statut').value,
     numero: 'F-' + Date.now().toString().slice(-4),
-  });
+  }).select();
   if (error) { toast('Erreur : ' + error.message, 'error'); return; }
-  toast('Facture sauvegardée !');
+  toast('✅ Facture sauvegardée!');
   document.getElementById('form-facture').style.display = 'none';
-  chargerFactures();
-  chargerDashboard();
+  chargerFactures(); chargerDashboard();
+  return data?.[0];
+}
+
+async function sauvegarderEtEnvoyerFacture() {
+  const f = await sauvegarderFacture();
+  if (!f) return;
+  const to = document.getElementById('fact-courriel').value;
+  if (!to) { toast('Ajoute un courriel client pour envoyer', 'info'); return; }
+  const ok = await envoyerEmail(to, `Facture ${f.numero} — ChantierPro`, htmlFacture(f));
+  if (ok) toast('✉️ Facture envoyée par courriel!');
+  else toast('Facture sauvegardée mais erreur d\'envoi', 'error');
 }
 
 async function chargerFactures() {
   const el = document.getElementById('liste-factures');
   el.innerHTML = '<div class="loading-row">Chargement…</div>';
-  const { data, error } = await db.from('factures').select('*').order('created_at', {ascending: false});
-  if (error || !data?.length) {
-    el.innerHTML = '<div class="empty-state"><i class="ti ti-receipt"></i><p>Aucune facture pour l\'instant.</p></div>';
-    return;
-  }
-  el.innerHTML = `<table>
-    <tr><th>#</th><th>Client</th><th>Travaux</th><th>Montant</th><th>Échéance</th><th>Statut</th><th></th></tr>
-    ${data.map(f => `<tr>
-      <td style="color:var(--muted)">${f.numero || '—'}</td>
-      <td><strong>${f.client_nom}</strong></td>
-      <td>${f.travaux || '—'}</td>
-      <td>${fmt(f.montant)}</td>
-      <td>${fmtDate(f.date_echeance)}</td>
-      <td>${badgeStatut(f.statut)}</td>
-      <td><button class="btn btn-sm" style="color:#A32D2D;border-color:#fcc" onclick="supprimerFacture('${f.id}')"><i class="ti ti-trash"></i></button></td>
-    </tr>`).join('')}
-  </table>`;
+  const { data } = await db.from('factures').select('*').order('created_at', {ascending:false});
+  if (!data?.length) { el.innerHTML = '<div class="empty-state"><i class="ti ti-receipt"></i><p>Aucune facture pour l\'instant.</p></div>'; return; }
+  el.innerHTML = `<table><tr><th>#</th><th>Client</th><th>Travaux</th><th>Montant</th><th>Échéance</th><th>Statut</th><th></th></tr>
+    ${data.map(f => `<tr><td style="color:var(--muted)">${f.numero||'—'}</td><td><strong>${f.client_nom}</strong></td><td>${f.travaux||'—'}</td><td>${fmt(f.montant)}</td><td>${fmtDate(f.date_echeance)}</td><td>${badgeStatut(f.statut)}</td>
+    <td><button class="btn btn-sm" style="color:#A32D2D;border-color:#fcc" onclick="supprimerFacture('${f.id}')"><i class="ti ti-trash"></i></button></td></tr>`).join('')}</table>`;
 }
 
 async function supprimerFacture(id) {
   if (!confirm('Supprimer cette facture ?')) return;
   await db.from('factures').delete().eq('id', id);
-  toast('Facture supprimée');
-  chargerFactures();
-  chargerDashboard();
+  toast('Facture supprimée'); chargerFactures(); chargerDashboard();
 }
 
 // ─── DÉPÔTS ─────────────────────────────────────────────────
 async function sauvegarderDepot() {
-  const { error } = await db.from('depots').insert({
+  const { error, data } = await db.from('depots').insert({
     client_nom: document.getElementById('dep-client').value,
     projet: document.getElementById('dep-projet').value,
     montant: parseFloat(document.getElementById('dep-montant').value) || 0,
     mode_paiement: document.getElementById('dep-mode').value,
     date_reception: document.getElementById('dep-date').value || null,
     statut: document.getElementById('dep-statut').value,
-  });
+  }).select();
   if (error) { toast('Erreur : ' + error.message, 'error'); return; }
-  toast('Dépôt sauvegardé !');
+  toast('✅ Dépôt sauvegardé!');
   document.getElementById('form-depot').style.display = 'none';
-  chargerDepots();
-  chargerDashboard();
+  chargerDepots(); chargerDashboard();
+  return data?.[0];
+}
+
+async function sauvegarderEtEnvoyerDepot() {
+  const d = await sauvegarderDepot();
+  if (!d) return;
+  const to = document.getElementById('dep-courriel').value;
+  if (!to) { toast('Ajoute un courriel client pour envoyer', 'info'); return; }
+  const html = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px"><div style="background:#D85A30;padding:16px 24px;border-radius:10px 10px 0 0"><h2 style="color:#fff;margin:0">🏗️ ChantierPro</h2></div><div style="border:1px solid #e0ddd6;border-top:none;padding:24px;border-radius:0 0 10px 10px"><p style="font-size:15px;color:#1a1a18">Bonjour <strong>${d.client_nom}</strong>,</p><p style="color:#5F5E5A;font-size:14px">Nous confirmons la réception de votre dépôt de <strong>${fmt(d.montant)}</strong> pour le projet : <strong>${d.projet||''}</strong>.</p>${d.mode_paiement?`<p style="color:#5F5E5A;font-size:13px">Mode de paiement : ${d.mode_paiement}</p>`:''}<p style="color:#3B6D11;font-size:13px;background:#EAF3DE;padding:10px 14px;border-radius:6px">✅ Dépôt confirmé — Merci!</p><p style="color:#888780;font-size:12px;margin-top:24px;border-top:1px solid #e0ddd6;padding-top:16px">Envoyé via ChantierPro</p></div></div>`;
+  const ok = await envoyerEmail(to, `Confirmation de dépôt — ${d.projet||'ChantierPro'}`, html);
+  if (ok) toast('✉️ Confirmation envoyée!');
+  else toast('Dépôt sauvegardé mais erreur d\'envoi', 'error');
 }
 
 async function chargerDepots() {
   const el = document.getElementById('liste-depots');
   el.innerHTML = '<div class="loading-row">Chargement…</div>';
-  const { data, error } = await db.from('depots').select('*').order('created_at', {ascending: false});
-  if (error || !data?.length) {
-    el.innerHTML = '<div class="empty-state"><i class="ti ti-coin"></i><p>Aucun dépôt pour l\'instant.</p></div>';
-    return;
-  }
-  el.innerHTML = data.map(d => {
-    const icons = {reçu:'<i class="ti ti-check" style="color:#3B6D11;font-size:18px"></i>', en_attente:'<i class="ti ti-clock" style="color:#854F0B;font-size:18px"></i>', en_retard:'<i class="ti ti-alert-triangle" style="color:#A32D2D;font-size:18px"></i>'};
-    const bgs = {reçu:'#EAF3DE', en_attente:'#FAEEDA', en_retard:'#FCEBEB'};
-    const amtColors = {reçu:'#3B6D11', en_attente:'#854F0B', en_retard:'#A32D2D'};
-    return `<div class="deposit-row">
-      <div class="deposit-icon" style="background:${bgs[d.statut]||'#F1EFE8'}">${icons[d.statut]||''}</div>
-      <div class="deposit-info">
-        <div class="deposit-title">${d.client_nom} — ${d.projet||''}</div>
-        <div class="deposit-meta">${d.mode_paiement||''} ${d.date_reception ? '· ' + fmtDate(d.date_reception) : ''}</div>
-      </div>
-      <div class="deposit-amount" style="color:${amtColors[d.statut]||'var(--text)'}">${fmt(d.montant)}</div>
-      <button class="btn btn-sm" style="color:#A32D2D;border-color:#fcc;margin-left:8px" onclick="supprimerDepot('${d.id}')"><i class="ti ti-trash"></i></button>
-    </div>`;
-  }).join('');
+  const { data } = await db.from('depots').select('*').order('created_at', {ascending:false});
+  if (!data?.length) { el.innerHTML = '<div class="empty-state"><i class="ti ti-coin"></i><p>Aucun dépôt pour l\'instant.</p></div>'; return; }
+  const icons = {reçu:'<i class="ti ti-check" style="color:#3B6D11;font-size:18px"></i>',en_attente:'<i class="ti ti-clock" style="color:#854F0B;font-size:18px"></i>',en_retard:'<i class="ti ti-alert-triangle" style="color:#A32D2D;font-size:18px"></i>'};
+  const bgs = {reçu:'#EAF3DE',en_attente:'#FAEEDA',en_retard:'#FCEBEB'};
+  const amtC = {reçu:'#3B6D11',en_attente:'#854F0B',en_retard:'#A32D2D'};
+  el.innerHTML = data.map(d => `<div class="deposit-row"><div class="deposit-icon" style="background:${bgs[d.statut]||'#F1EFE8'}">${icons[d.statut]||''}</div><div class="deposit-info"><div class="deposit-title">${d.client_nom} — ${d.projet||''}</div><div class="deposit-meta">${d.mode_paiement||''} ${d.date_reception?'· '+fmtDate(d.date_reception):''}</div></div><div class="deposit-amount" style="color:${amtC[d.statut]||'var(--text)'}">${fmt(d.montant)}</div><button class="btn btn-sm" style="color:#A32D2D;border-color:#fcc;margin-left:8px" onclick="supprimerDepot('${d.id}')"><i class="ti ti-trash"></i></button></div>`).join('');
 }
 
 async function supprimerDepot(id) {
   if (!confirm('Supprimer ce dépôt ?')) return;
   await db.from('depots').delete().eq('id', id);
-  toast('Dépôt supprimé');
-  chargerDepots();
-  chargerDashboard();
+  toast('Dépôt supprimé'); chargerDepots(); chargerDashboard();
 }
 
 // ─── ÉQUIPE ─────────────────────────────────────────────────
 async function sauvegarderMembre() {
-  const { error } = await db.from('equipe').insert({
-    nom: document.getElementById('eq-nom').value,
-    role: document.getElementById('eq-role').value,
-    courriel: document.getElementById('eq-courriel').value,
-  });
+  const { error } = await db.from('equipe').insert({ nom: document.getElementById('eq-nom').value, role: document.getElementById('eq-role').value, courriel: document.getElementById('eq-courriel').value });
   if (error) { toast('Erreur : ' + error.message, 'error'); return; }
-  toast('Membre ajouté !');
+  toast('✅ Membre ajouté!');
   document.getElementById('form-equipe').style.display = 'none';
-  document.getElementById('eq-nom').value = '';
-  document.getElementById('eq-courriel').value = '';
-  chargerEquipe();
-  chargerDashboard();
+  document.getElementById('eq-nom').value = ''; document.getElementById('eq-courriel').value = '';
+  chargerEquipe(); chargerDashboard();
 }
 
 async function chargerEquipe() {
   const el = document.getElementById('liste-equipe');
   el.innerHTML = '<div class="loading-row" style="grid-column:1/-1">Chargement…</div>';
-  const { data, error } = await db.from('equipe').select('*').order('created_at');
-  if (error || !data?.length) {
-    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-users"></i><p>Aucun membre pour l\'instant.</p></div>';
-    return;
-  }
-  el.innerHTML = data.map((m, i) => `
-    <div class="member-card">
-      <div class="member-avatar" style="background:${couleurs[i%5]};color:${couleursTexte[i%5]}">${initiales(m.nom)}</div>
-      <div class="member-name">${m.nom}</div>
-      <div class="member-role"><span class="badge badge-gray">${m.role||'—'}</span></div>
-      ${m.courriel ? `<div style="font-size:11px;color:var(--muted);margin-top:6px">${m.courriel}</div>` : ''}
-      <button class="btn btn-sm" style="color:#A32D2D;border-color:#fcc;margin-top:10px;width:100%;justify-content:center" onclick="supprimerMembre('${m.id}')"><i class="ti ti-trash"></i>Retirer</button>
-    </div>
-  `).join('');
+  const { data } = await db.from('equipe').select('*').order('created_at');
+  if (!data?.length) { el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-users"></i><p>Aucun membre pour l\'instant.</p></div>'; return; }
+  el.innerHTML = data.map((m,i) => `<div class="member-card"><div class="member-avatar" style="background:${couleurs[i%5]};color:${couleursTexte[i%5]}">${initiales(m.nom)}</div><div class="member-name">${m.nom}</div><div style="margin-bottom:8px"><span class="badge badge-gray">${m.role||'—'}</span></div>${m.courriel?`<div style="font-size:11px;color:var(--muted);margin-bottom:10px">${m.courriel}</div>`:''}<button class="btn btn-sm" style="color:#A32D2D;border-color:#fcc;width:100%;justify-content:center" onclick="supprimerMembre('${m.id}')"><i class="ti ti-trash"></i>Retirer</button></div>`).join('');
 }
 
 async function supprimerMembre(id) {
   if (!confirm('Retirer ce membre ?')) return;
   await db.from('equipe').delete().eq('id', id);
-  toast('Membre retiré');
-  chargerEquipe();
-  chargerDashboard();
+  toast('Membre retiré'); chargerEquipe(); chargerDashboard();
 }
 
 // ─── DASHBOARD ──────────────────────────────────────────────
 async function chargerDashboard() {
   const [soum, fact, dep, eq] = await Promise.all([
-    db.from('soumissions').select('id, client_nom, total_ttc, statut, created_at').order('created_at', {ascending:false}).limit(5),
-    db.from('factures').select('id, client_nom, travaux, montant, statut, created_at').order('created_at', {ascending:false}).limit(5),
-    db.from('depots').select('montant, statut'),
+    db.from('soumissions').select('id,client_nom,total_ttc,statut,created_at').order('created_at',{ascending:false}).limit(5),
+    db.from('factures').select('id,client_nom,travaux,montant,statut,created_at').order('created_at',{ascending:false}).limit(5),
+    db.from('depots').select('montant,statut'),
     db.from('equipe').select('id'),
   ]);
-
   document.getElementById('stat-soum').textContent = soum.data?.length ?? '0';
-  document.getElementById('stat-fact').textContent = fact.data?.filter(f => f.statut !== 'payée').length ?? '0';
-  const totalDep = dep.data?.filter(d => d.statut === 'reçu').reduce((a, d) => a + (d.montant || 0), 0) ?? 0;
+  document.getElementById('stat-fact').textContent = fact.data?.filter(f=>f.statut!=='payée').length ?? '0';
+  const totalDep = dep.data?.filter(d=>d.statut==='reçu').reduce((a,d)=>a+(d.montant||0),0) ?? 0;
   document.getElementById('stat-dep').textContent = fmt(totalDep);
   document.getElementById('stat-equipe').textContent = eq.data?.length ?? '0';
-
-  const dashSoum = document.getElementById('dash-soumissions');
-  if (!soum.data?.length) {
-    dashSoum.innerHTML = '<div class="empty-state"><i class="ti ti-file-invoice"></i><p>Aucune soumission encore.</p></div>';
-  } else {
-    dashSoum.innerHTML = `<table>
-      <tr><th>Client</th><th>Total TTC</th><th>Statut</th><th>Date</th></tr>
-      ${soum.data.map(s => `<tr><td><strong>${s.client_nom}</strong></td><td>${fmt(s.total_ttc)}</td><td>${badgeStatut(s.statut)}</td><td>${fmtDate(s.created_at)}</td></tr>`).join('')}
-    </table>`;
-  }
-
-  const dashFact = document.getElementById('dash-factures');
-  if (!fact.data?.length) {
-    dashFact.innerHTML = '<div class="empty-state"><i class="ti ti-receipt"></i><p>Aucune facture encore.</p></div>';
-  } else {
-    dashFact.innerHTML = `<table>
-      <tr><th>Client</th><th>Travaux</th><th>Montant</th><th>Statut</th></tr>
-      ${fact.data.map(f => `<tr><td><strong>${f.client_nom}</strong></td><td>${f.travaux||'—'}</td><td>${fmt(f.montant)}</td><td>${badgeStatut(f.statut)}</td></tr>`).join('')}
-    </table>`;
-  }
-
-  const now = new Date();
-  document.getElementById('topbar-sub').textContent = now.toLocaleDateString('fr-CA', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  const ds = document.getElementById('dash-soumissions');
+  ds.innerHTML = soum.data?.length ? `<table><tr><th>Client</th><th>Total TTC</th><th>Statut</th><th>Date</th></tr>${soum.data.map(s=>`<tr><td><strong>${s.client_nom}</strong></td><td>${fmt(s.total_ttc)}</td><td>${badgeStatut(s.statut)}</td><td>${fmtDate(s.created_at)}</td></tr>`).join('')}</table>` : '<div class="empty-state"><i class="ti ti-file-invoice"></i><p>Aucune soumission encore.</p></div>';
+  const df = document.getElementById('dash-factures');
+  df.innerHTML = fact.data?.length ? `<table><tr><th>Client</th><th>Travaux</th><th>Montant</th><th>Statut</th></tr>${fact.data.map(f=>`<tr><td><strong>${f.client_nom}</strong></td><td>${f.travaux||'—'}</td><td>${fmt(f.montant)}</td><td>${badgeStatut(f.statut)}</td></tr>`).join('')}</table>` : '<div class="empty-state"><i class="ti ti-receipt"></i><p>Aucune facture encore.</p></div>';
+  document.getElementById('topbar-sub').textContent = new Date().toLocaleDateString('fr-CA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 
-// ─── IA SOUMISSIONS ─────────────────────────────────────────
+// ─── IA ─────────────────────────────────────────────────────
 async function genererSoumission() {
   const prompt = document.getElementById('ai-prompt').value.trim();
   if (!prompt) return;
   const loading = document.getElementById('ai-loading');
   const result = document.getElementById('ai-result');
-  loading.classList.add('visible');
-  result.classList.remove('visible');
+  loading.classList.add('visible'); result.classList.remove('visible');
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        system: `Tu es un assistant pour un entrepreneur au Québec. Génère une soumission en JSON uniquement, sans markdown:
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:1000,
+        system:`Tu es un assistant pour un entrepreneur au Québec. Génère une soumission en JSON uniquement, sans markdown:
 {"client":"...","type":"Électricité","adresse":"...","description":"...","mo":0,"mat":0,"dep":0,"marge":15,"notes":"..."}
-Estime les montants réalistement (taux élec. ~90$/h). Si une info manque, mets une valeur raisonnable.`,
-        messages: [{role:'user', content: prompt}]
-      })
+Estime les montants réalistement (taux élec. ~90$/h).`,
+        messages:[{role:'user',content:prompt}] })
     });
     const data = await resp.json();
-    const text = data.content.map(i => i.text || '').join('').trim().replace(/```json|```/g, '');
-    const parsed = JSON.parse(text);
-    if (parsed.client) document.getElementById('f-client').value = parsed.client;
-    if (parsed.type) document.getElementById('f-type').value = parsed.type;
-    if (parsed.adresse) document.getElementById('f-adresse').value = parsed.adresse;
-    if (parsed.description) document.getElementById('f-desc').value = parsed.description;
-    if (parsed.mo) document.getElementById('mo').value = parsed.mo;
-    if (parsed.mat) document.getElementById('mat').value = parsed.mat;
-    if (parsed.dep) document.getElementById('dep').value = parsed.dep;
-    if (parsed.marge) document.getElementById('marge').value = parsed.marge;
+    const text = data.content.map(i=>i.text||'').join('').trim().replace(/```json|```/g,'');
+    const p = JSON.parse(text);
+    if(p.client) document.getElementById('f-client').value=p.client;
+    if(p.type) document.getElementById('f-type').value=p.type;
+    if(p.adresse) document.getElementById('f-adresse').value=p.adresse;
+    if(p.description) document.getElementById('f-desc').value=p.description;
+    if(p.mo) document.getElementById('mo').value=p.mo;
+    if(p.mat) document.getElementById('mat').value=p.mat;
+    if(p.dep) document.getElementById('dep').value=p.dep;
+    if(p.marge) document.getElementById('marge').value=p.marge;
     calcSoum();
-    result.innerHTML = `<strong>✓ Formulaire rempli automatiquement</strong>${parsed.notes ? '<br>' + parsed.notes : ''}<br><span style="font-size:11px;opacity:0.7">Vérifiez et ajustez les montants au besoin avant de sauvegarder.</span>`;
+    result.innerHTML=`<strong>✓ Formulaire rempli!</strong>${p.notes?'<br>'+p.notes:''}<br><span style="font-size:11px;opacity:0.7">Vérifiez et ajustez avant de sauvegarder.</span>`;
     result.classList.add('visible');
-  } catch(e) {
-    result.textContent = 'Erreur de génération. Remplis le formulaire manuellement.';
-    result.classList.add('visible');
-  }
+  } catch(e) { result.textContent='Erreur de génération.'; result.classList.add('visible'); }
   loading.classList.remove('visible');
 }
 
-document.getElementById('ai-prompt').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && e.metaKey) genererSoumission();
-});
+document.getElementById('ai-prompt').addEventListener('keydown', e => { if(e.key==='Enter'&&e.metaKey) genererSoumission(); });
 
-// ─── INIT ───────────────────────────────────────────────────
+// Fermer modal en cliquant dehors
+document.getElementById('modal-courriel').addEventListener('click', function(e) { if(e.target===this) fermerModal(); });
+
 chargerDashboard();
 </script>
 </body>
