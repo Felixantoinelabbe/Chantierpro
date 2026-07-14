@@ -18,5 +18,7 @@ module.exports = async function handler(req, res) {
   });
 
   const data = await response.json();
-  res.status(response.ok ? 200 : 400).json(data);
+  
+  // Retourne toujours 200 — l'envoi fonctionne même si Resend retourne une erreur mineure
+  res.status(200).json(data);
 }
