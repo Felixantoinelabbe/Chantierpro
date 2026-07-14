@@ -8,7 +8,7 @@ export default async function handler(req, res) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      from: 'ChantierPro <onboarding@resend.dev>',
+      from: 'onboarding@resend.dev',
       to, subject, html
     })
   });
